@@ -3,6 +3,33 @@ import { CommentList } from "@/components/CommentList";
 import { Vote } from "@/components/Vote";
 import { db } from "@/db";
 
+/*
+export const metadata = {
+  title: `Didit - Post ${params.postId}`,
+  description: "Didit - Posts list",
+};
+*/
+
+export async function generateMetadata({ params }, parent) {
+  // load the post
+
+  const { rows: posts } = await db.query(`SELECT posts.id, posts.title, posts.body, posts.created_at, users.name, 
+    COALESCE(SUM(votes.vote), 0) AS vote_total
+    FROM posts
+    JOIN users ON posts.user_id = users.id
+    LEFT JOIN votes ON votes.post_id = posts.id
+    WHERE posts.id = ${params.postId}
+    GROUP BY posts.id, users.name
+    LIMIT 1`);
+  const post = posts[0]; // get the first one
+
+  return {
+    title: post.title,
+  };
+}
+
+
+
 export default async function SinglePostPage({ params }) {
   const postId = params.postId;
 

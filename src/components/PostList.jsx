@@ -4,6 +4,8 @@ import { Vote } from "./Vote";
 import { db } from "@/db";
 import { POSTS_PER_PAGE } from "@/config";
 
+
+
 export async function PostList({ currentPage = 1 }) {
   const { rows: posts } =
     await db.query(`SELECT posts.id, posts.title, posts.body, posts.created_at, users.name, 

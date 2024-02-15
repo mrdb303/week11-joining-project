@@ -7,17 +7,20 @@ export async function Vote({ postId, votes }) {
   async function upvote() {
     "use server";
     const session = await auth();
-    
 
-    // Prevents someone from voting if they are not logged in
+    // Prevents someone from voting if they are not logged in 
     if(session !== null) {
-      console.log("Upvote", postId, "by user", session.user.id);
-      console.log("\nDB Session user id : " + session.user.id);
-
-      await db.query(
-        "INSERT INTO votes (user_id, post_id, vote, vote_type) VALUES ($1, $2, $3, $4)",
-        [session.user.id, postId, 1, "post"]
+      const rowsFound = await db.query("SELECT * FROM votes WHERE user_id = $1 AND post_id = $2",
+        [session.user.id, postId]
       );
+
+      // Prevents someone from voting twice
+      if(rowsFound.rowCount === 0) {
+        await db.query(
+          "INSERT INTO votes (user_id, post_id, vote, vote_type) VALUES ($1, $2, $3, $4)",
+          [session.user.id, postId, 1, "post"]
+        );
+      }
     }
 
     revalidatePath("/");
@@ -31,10 +34,18 @@ export async function Vote({ postId, votes }) {
     // Prevents someone from voting if they are not logged in
     if(session !== null) {
       console.log("Downvote", postId, "by user", session.user.id);
-      await db.query(
-        "INSERT INTO votes (user_id, post_id, vote, vote_type) VALUES ($1, $2, $3, $4)",
-        [session.user.id, postId, -1, "post"]
+      
+      const rowsFound = await db.query("SELECT * FROM votes WHERE user_id = $1 AND post_id = $2",
+        [session.user.id, postId]
       );
+
+      // Prevents someone from voting twice
+      if(rowsFound.rowCount === 0) {
+        await db.query(
+          "INSERT INTO votes (user_id, post_id, vote, vote_type) VALUES ($1, $2, $3, $4)",
+          [session.user.id, postId, -1, "post"]
+        );
+      }
     }
 
     revalidatePath("/");
