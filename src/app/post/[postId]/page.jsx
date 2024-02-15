@@ -1,18 +1,12 @@
 import { CommentForm } from "@/components/CommentForm";
 import { CommentList } from "@/components/CommentList";
+import { ReportUser } from "@/components/ReportUser";
 import { Vote } from "@/components/Vote";
 import { db } from "@/db";
 
-/*
-export const metadata = {
-  title: `Didit - Post ${params.postId}`,
-  description: "Didit - Posts list",
-};
-*/
 
+// Added for the update of page metadata, to reflect the name of the post
 export async function generateMetadata({ params }, parent) {
-  // load the post
-
   const { rows: posts } = await db.query(`SELECT posts.id, posts.title, posts.body, posts.created_at, users.name, 
     COALESCE(SUM(votes.vote), 0) AS vote_total
     FROM posts
@@ -21,14 +15,12 @@ export async function generateMetadata({ params }, parent) {
     WHERE posts.id = ${params.postId}
     GROUP BY posts.id, users.name
     LIMIT 1`);
-  const post = posts[0]; // get the first one
+  const post = posts[0]; 
 
   return {
     title: post.title,
   };
 }
-
-
 
 export default async function SinglePostPage({ params }) {
   const postId = params.postId;
@@ -63,6 +55,7 @@ export default async function SinglePostPage({ params }) {
 
       <h2>Votes</h2>
       <Vote postId={post.id} votes={post.vote_total} />
+      <ReportUser postId={post.id} userName={post.name} />
 
       <CommentForm postId={post.id} />
       <CommentList postId={post.id} />

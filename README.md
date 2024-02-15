@@ -1,3 +1,31 @@
+## Danny's notes
+
+
+- Fix page titles on post pages to match the post title<br>
+
+Fixed on user posts page
+
+- Handle the error when you click to vote while not logged in to show a nice error message<br>
+
+Error no longer appears and code does not allow user to vote if not logged in
+
+- Try to make it so i can't vote more than once (Fix could be done in the SQL with the constraints  (ideally), or in app code to check the db before adding a new row to the votes table)<br>
+
+Fixed. With a pre-check to see if user has already voted on the post. If so, new vote is not recorded
+
+- Deploy to Vercel<br>
+
+Deployed to URL [https://week11-joining-project.vercel.app](https://week11-joining-project.vercel.app)
+
+
+## Extras
+
+Report button added, but currently does not record data.
+<br>
+
+
+
+
 ## Upvote
 
 Upvote is a Reddit-esque web application that allows users to create posts, upvote and downvote posts, and common on posts in a multi-threaded nested list.
@@ -47,3 +75,6 @@ The project is a work in progress and is not yet complete.
 4. Create the database schema by running the SQL commands in `schema.sql` in your database (eg. by running the commands in Supabase Query Editor)
 5. Run `npm run dev` to start the development server
 6. Open [http://localhost:3000](http://localhost:3000) with your browser to see the site
+
+
+
