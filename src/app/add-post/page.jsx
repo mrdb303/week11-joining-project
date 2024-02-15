@@ -22,8 +22,9 @@ export default async function Home() {
       [title, content, userId]
     );
 
+
     revalidatePath("/");
-    redirect("/");
+    redirect(`/`);
   }
 
   if (!session) {

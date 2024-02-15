@@ -7,11 +7,18 @@ export async function Vote({ postId, votes }) {
   async function upvote() {
     "use server";
     const session = await auth();
-    console.log("Upvote", postId, "by user", session.user.id);
-    await db.query(
-      "INSERT INTO votes (user_id, post_id, vote, vote_type) VALUES ($1, $2, $3, $4)",
-      [session.user.id, postId, 1, "post"]
-    );
+    
+
+    // Prevents someone from voting if they are not logged in
+    if(session !== null) {
+      console.log("Upvote", postId, "by user", session.user.id);
+      console.log("\nDB Session user id : " + session.user.id);
+
+      await db.query(
+        "INSERT INTO votes (user_id, post_id, vote, vote_type) VALUES ($1, $2, $3, $4)",
+        [session.user.id, postId, 1, "post"]
+      );
+    }
 
     revalidatePath("/");
     revalidatePath(`/post/${postId}`);
@@ -20,11 +27,15 @@ export async function Vote({ postId, votes }) {
   async function downvote() {
     "use server";
     const session = await auth();
-    console.log("Downvote", postId, "by user", session.user.id);
-    await db.query(
-      "INSERT INTO votes (user_id, post_id, vote, vote_type) VALUES ($1, $2, $3, $4)",
-      [session.user.id, postId, -1, "post"]
-    );
+
+    // Prevents someone from voting if they are not logged in
+    if(session !== null) {
+      console.log("Downvote", postId, "by user", session.user.id);
+      await db.query(
+        "INSERT INTO votes (user_id, post_id, vote, vote_type) VALUES ($1, $2, $3, $4)",
+        [session.user.id, postId, -1, "post"]
+      );
+    }
 
     revalidatePath("/");
     revalidatePath(`/post/${postId}`);
